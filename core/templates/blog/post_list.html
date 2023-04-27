@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+<P>hello</P>
+         {% for post in posts %}
+            <a href="{% url 'blog:post_detail' pk=post.id %}"> <h1> {{post.title}}</h1> </a>
+
+                 <P>{{post.}}---{{post.content}}</P>
+
+            <a href="{% url 'blog:post_edite' post.id %}"> <h5>  edited </h5> </a>
+           {% if perms.blog.delete_post %}
+                <a href="{% url 'blog:post_delete' post.id %}"> <h5>  dell </h5> </a>
+           {% endif %}
+
+         {% endfor %}
+
+<div class="pagination">
+    <span class="step-links">
+        {% if page_obj.has_previous %}
+            <a href="?page=1">&laquo; first</a>
+            <a href="?page={{ page_obj.previous_page_number }}">previous</a>
+        {% endif %}
+
+        <span class="current">
+            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+        </span>
+
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}">next</a>
+            <a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
+        {% endif %}
+    </span>
+</div>
+</body>
+</html>
