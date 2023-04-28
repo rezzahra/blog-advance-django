@@ -2,14 +2,16 @@ from django.db import models
 from django.contrib.auth import get_user_model
 from django.utils import timezone
 
-
 # Create your models here.
+# User = get_user_model()
+
+
 class Post(models.Model):
     '''
        this is a class to define posts to blog app
     '''
-    User = get_user_model()
-    author = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    author = models.ForeignKey('accounts.Profile', on_delete=models.CASCADE)
     image = models.ImageField(null=True, blank=True)
     title = models.CharField(max_length=100)
     content = models.TextField()
