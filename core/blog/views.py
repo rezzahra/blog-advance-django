@@ -5,7 +5,7 @@ from .models import Post
 from .forms import PostForm
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
-
+from accounts.models import Profile
 
 # Create your views here.
 class IndexView(TemplateView):
@@ -20,7 +20,7 @@ class IndexView(TemplateView):
 
 # founction base view Redirect
 '''
-from django.shortcuts import redirect
+fom django.shortcuts import redirect
 def redirectmaktab(request):
     return redirect('https://maktabkhooneh.org/')
 '''
@@ -56,9 +56,12 @@ class PostCreateView(CreateView):
     success_url = reverse_lazy('blog:post_list')
 
     def form_valid(self, form):
-        form.instance.author = self.request.user
+        form.instance.author = Profile.objects.get(user=self.request.user)
         return super(PostCreateView, self).form_valid(form)
-
+        # self.object = form.save(commit=False)
+        # form.instance.author = Profile.objects.get(user=self.request.user)
+        # self.object.save()
+        # return super().form_valid(form)
 
 class PostEdite(UpdateView):
     model = Post

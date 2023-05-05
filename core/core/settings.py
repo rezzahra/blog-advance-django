@@ -42,6 +42,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    'rest_framework',
+
     'accounts',
     'blog',
 ]
@@ -140,4 +142,9 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # user manager config
 AUTH_USER_MODEL = 'accounts.User'
 
-# AUTH_PROFILE_MODULE = 'accounts.Profile'
+# restframework seeting
+
+#for login - be sorat koliu roye hame addres ha emal mishavad
+# REST_FRAMEWORK = {
+#     'DEFAULT_PERMISSION_CLASSES':['rest_framework.permission.IsAuthenticated', ]
+# }
