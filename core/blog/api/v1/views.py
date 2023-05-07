@@ -8,8 +8,13 @@ from django.shortcuts import get_object_or_404
 # cbv api.view
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
-# cbv generic.v
+# cbv generic.view
+from rest_framework.generics import GenericAPIView, ListCreateAPIView, RetrieveUpdateDestroyAPIView
+from rest_framework import mixins
+
 """
+    '''getting post list  and create post'''
+    
 @api_view(['GET', 'POST'])
 @permission_classes([IsAuthenticated])
 def post_list(request):
@@ -22,11 +27,11 @@ def post_list(request):
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data)
-                                          """
+"""
 
-
+'''
 class PostList(APIView):
-    """getting post list  and create post"""
+    """ getting post list  and create post by api view """
     permission_classes = [IsAuthenticatedOrReadOnly]
     serializer_class = PostSerializer
     def get(self, request):
@@ -40,52 +45,112 @@ class PostList(APIView):
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data)
+'''
 
-"""
+
+'''
+class PostList(GenericAPIView, mixins.ListModelMixin, mixins.CreateModelMixin):
+    """getting post list  and create new post by GenericAPIView & mixins """
+    permission_classes = [IsAuthenticatedOrReadOnly]
+    serializer_class = PostSerializer
+    queryset = Post.objects.filter(status=True)
+    def get(self, request, *args, **kwargs):
+        """ retrieving the post data """
+        return self.list(request, *args, **kwargs)
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
+'''
+
+
+class PostList(ListCreateAPIView):
+    """ getting post list  and create new post by ListCreateAPIView """
+    permission_classes = [IsAuthenticatedOrReadOnly]
+    serializer_class = PostSerializer
+    queryset = Post.objects.filter(status=True)
+
+
+
+
+
+'''
+     """ getting detail of the post and edit plus removing it by fbv """
 @api_view(['GET', 'PUT', 'DELETE'])
-def post_detail(request, id):
+def post_detail(request, pk):
     if request.method == 'GET':
-        post = get_object_or_404(Post, pk=id, status=True)
+        post = get_object_or_404(Post, pk=pk, status=True)
         serializer = PostSerializer(post)
         return Response(serializer.data)
     elif request.method == 'PUT':
-        post = get_object_or_404(Post, pk=id, status=True)
+        post = get_object_or_404(Post, pk=pk, status=True)
         serializer = PostSerializer(post, data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data)
     elif request.method == 'DELETE':
-        post = get_object_or_404(Post, pk=id, status=True)
+        post = get_object_or_404(Post, pk=pk, status=True)
         post.delete()
         return Response({'detail':'post removed'}, status=status.HTTP_204_NO_CONTENT) 
 
     # try: for first if
-    #     post = Post.objects.get(pk=id)
+    #     post = Post.objects.get(pk=pk)
     #     serializer = PostSerializer(post)
     #     return Response(serializer.data)
     # except Post.DoesNotExist:
     #     return Response({'detail':'post does not exist'}, status=status.HTTP_404_NOT_FOUND)
-                                                                                               """
+'''
 
 
+'''
 class PostDetail(APIView):
-    """getting detail of the post and edit plus removing it"""
+    """getting detail of the post and edit plus removing it by APIView"""
     permission_classes = [IsAuthenticatedOrReadOnly]
     serializer_class = PostSerializer
-    def get(self, request, id):
+    def get(self, request, pk):
         """ retrieving the post data """
-        post = get_object_or_404(Post, pk=id, status=True)
+        post = get_object_or_404(Post, pk=pk, status=True)
         serializer = self.serializer_class(post)
         return Response(serializer.data)
-    def put(self, request, id):
+    def put(self, request, pk):
         """ editing the post data"""
-        post = get_object_or_404(Post, pk=id, status=True)
+        post = get_object_or_404(Post, pk=pk, status=True)
         serializer = self.serializer_class(post, data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data)
-    def delete(self, request, id):
+    def delete(self, request, pk):
         """ deleting the post data"""
-        post = get_object_or_404(Post, pk=id, status=True)
+        post = get_object_or_404(Post, pk=pk, status=True)
         post.delete()
         return Response({'detail':'post does not exist'}, status=status.HTTP_404_NOT_FOUND)
+'''
+
+
+'''
+class PostDetail(GenericAPIView, mixins.RetrieveModelMixin, mixins.UpdateModelMixin, mixins.DestroyModelMixin):
+    """getting detail of the post and edit plus removing it by GenericAPIView & mixins """
+    permission_classes = [IsAuthenticatedOrReadOnly]
+    serializer_class = PostSerializer
+    queryset = Post.objects.filter(status=True)
+    def get(self, request, *args, **kwargs):
+        """ retrieving the post data """
+        return self.retrieve(request, *args, **kwargs)
+
+    def put(self, request, *args, **kwargs):
+        """ updating the post data """
+        return self.update(request, *args, **kwargs)
+
+    def delete(self, request, *args, **kwargs):
+        """ deleting the post data """
+        return self.destroy(request, *args, **kwargs)
+'''
+
+
+class PostDetail(RetrieveUpdateDestroyAPIView):
+    """getting detail of the post and edit plus removing it by RetrieveUpdateDestroyAPIView"""
+    permission_classes= [IsAuthenticatedOrReadOnly]
+    serializer_class = PostSerializer
+    queryset = Post.objects.filter(status=True)
+
+
+
+
