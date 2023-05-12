@@ -24,6 +24,8 @@ class Post(models.Model):
 
     def __str__(self):
         return f'name : {self.author}'
+    def get_snippet(self):
+        return self.content[0:4]
 
 
 class Category(models.Model):
