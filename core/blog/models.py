@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth import get_user_model
 from django.utils import timezone
+from django.urls import reverse
 
 # Create your models here.
 # User = get_user_model()
@@ -26,6 +27,8 @@ class Post(models.Model):
         return f'name : {self.author}'
     def get_snippet(self):
         return self.content[0:4]
+    def get_absolute_api_url(self):
+        return reverse('blog:api-v1:post-detail', kwargs={'pk':self.pk})
 
 
 class Category(models.Model):
