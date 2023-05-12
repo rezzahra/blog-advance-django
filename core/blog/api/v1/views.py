@@ -1,8 +1,8 @@
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from .serializers import PostSerializer
-from blog.models import Post
+from .serializers import PostSerializer, CategorySerializer
+from blog.models import Post, Category
 from rest_framework import status
 from django.shortcuts import get_object_or_404
 # cbv api.view
@@ -11,7 +11,9 @@ from rest_framework.permissions import IsAuthenticatedOrReadOnly
 # cbv generic.view
 from rest_framework.generics import GenericAPIView, ListCreateAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework import mixins
-
+# cbv view set
+from rest_framework import viewsets
+from rest_framework.decorators import action
 """
     '''getting post list  and create post'''
     
@@ -30,7 +32,7 @@ def post_list(request):
 """
 
 '''
-class PostList(APIView):
+class PostListApi(APIView):
     """ getting post list  and create post by api view """
     permission_classes = [IsAuthenticatedOrReadOnly]
     serializer_class = PostSerializer
@@ -49,7 +51,7 @@ class PostList(APIView):
 
 
 '''
-class PostList(GenericAPIView, mixins.ListModelMixin, mixins.CreateModelMixin):
+class PostListGeneric(GenericAPIView, mixins.ListModelMixin, mixins.CreateModelMixin):
     """getting post list  and create new post by GenericAPIView & mixins """
     permission_classes = [IsAuthenticatedOrReadOnly]
     serializer_class = PostSerializer
@@ -62,13 +64,12 @@ class PostList(GenericAPIView, mixins.ListModelMixin, mixins.CreateModelMixin):
 '''
 
 
-class PostList(ListCreateAPIView):
-    """ getting post list  and create new post by ListCreateAPIView """
-    permission_classes = [IsAuthenticatedOrReadOnly]
-    serializer_class = PostSerializer
-    queryset = Post.objects.filter(status=True)
-
-
+# class PostList(ListCreateAPIView):
+#     """ getting post list  and create new post by ListCreateAPIView """
+#     permission_classes = [IsAuthenticatedOrReadOnly]
+#     serializer_class = PostSerializer
+#     queryset = Post.objects.filter(status=True)
+#
 
 
 
@@ -101,7 +102,7 @@ def post_detail(request, pk):
 
 
 '''
-class PostDetail(APIView):
+class PostDetailApi(APIView):
     """getting detail of the post and edit plus removing it by APIView"""
     permission_classes = [IsAuthenticatedOrReadOnly]
     serializer_class = PostSerializer
@@ -126,7 +127,7 @@ class PostDetail(APIView):
 
 
 '''
-class PostDetail(GenericAPIView, mixins.RetrieveModelMixin, mixins.UpdateModelMixin, mixins.DestroyModelMixin):
+class PostDetailGeneric(GenericAPIView, mixins.RetrieveModelMixin, mixins.UpdateModelMixin, mixins.DestroyModelMixin):
     """getting detail of the post and edit plus removing it by GenericAPIView & mixins """
     permission_classes = [IsAuthenticatedOrReadOnly]
     serializer_class = PostSerializer
@@ -145,12 +146,26 @@ class PostDetail(GenericAPIView, mixins.RetrieveModelMixin, mixins.UpdateModelMi
 '''
 
 
-class PostDetail(RetrieveUpdateDestroyAPIView):
-    """getting detail of the post and edit plus removing it by RetrieveUpdateDestroyAPIView"""
+# class PostDetail(RetrieveUpdateDestroyAPIView):
+#     """getting detail of the post and edit plus removing it by RetrieveUpdateDestroyAPIView"""
+#     permission_classes= [IsAuthenticatedOrReadOnly]
+#     serializer_class = PostSerializer
+#     queryset = Post.objects.filter(status=True)
+#
+
+
+class PostModelViewSet(viewsets.ModelViewSet):
+    """getting list post & detail of the post by viewsets.ModelViewSet """
     permission_classes= [IsAuthenticatedOrReadOnly]
     serializer_class = PostSerializer
     queryset = Post.objects.filter(status=True)
+    @action(detail=False, methods=['get'])
+    def get_ok(self, request):
+        return Response({'detail':'ok'})
 
 
-
-
+class CategoryModelViewSet(viewsets.ModelViewSet):
+    """getting category of the post by viewsets.ModelViewSet """
+    permission_classes = [IsAuthenticatedOrReadOnly]
+    serializer_class = CategorySerializer
+    queryset = Category.objects.all()
