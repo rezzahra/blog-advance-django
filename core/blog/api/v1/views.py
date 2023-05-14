@@ -14,6 +14,7 @@ from rest_framework import mixins
 # cbv view set
 from rest_framework import viewsets
 from rest_framework.decorators import action
+from .permissions import IsOwnerOrReadOnly
 """
     '''getting post list  and create post'''
     
@@ -156,7 +157,7 @@ class PostDetailGeneric(GenericAPIView, mixins.RetrieveModelMixin, mixins.Update
 
 class PostModelViewSet(viewsets.ModelViewSet):
     """getting list post & detail of the post by viewsets.ModelViewSet """
-    permission_classes= [IsAuthenticatedOrReadOnly]
+    permission_classes= [IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
     serializer_class = PostSerializer
     queryset = Post.objects.filter(status=True)
     @action(detail=False, methods=['get'])
