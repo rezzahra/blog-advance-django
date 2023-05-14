@@ -15,6 +15,7 @@ from rest_framework import mixins
 from rest_framework import viewsets
 from rest_framework.decorators import action
 from .permissions import IsOwnerOrReadOnly
+from django_filters.rest_framework import DjangoFilterBackend
 """
     '''getting post list  and create post'''
     
@@ -153,13 +154,14 @@ class PostDetailGeneric(GenericAPIView, mixins.RetrieveModelMixin, mixins.Update
 #     serializer_class = PostSerializer
 #     queryset = Post.objects.filter(status=True)
 #
-
-
 class PostModelViewSet(viewsets.ModelViewSet):
     """getting list post & detail of the post by viewsets.ModelViewSet """
     permission_classes= [IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
     serializer_class = PostSerializer
     queryset = Post.objects.filter(status=True)
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['category', 'author']
+
     @action(detail=False, methods=['get'])
     def get_ok(self, request):
         return Response({'detail':'ok'})
