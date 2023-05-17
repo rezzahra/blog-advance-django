@@ -44,6 +44,7 @@ INSTALLED_APPS = [
 
     'rest_framework',
     'django_filters',
+    'drf_yasg',
 
     'accounts',
     'blog',
@@ -149,3 +150,6 @@ AUTH_USER_MODEL = 'accounts.User'
 # REST_FRAMEWORK = {
 #     'DEFAULT_PERMISSION_CLASSES':['rest_framework.permission.IsAuthenticated', ]
 # }
+
+#login
+LOGIN_REDIRECT_URL = "/"

@@ -15,7 +15,11 @@ from rest_framework import mixins
 from rest_framework import viewsets
 from rest_framework.decorators import action
 from .permissions import IsOwnerOrReadOnly
+# filte
 from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.filters import SearchFilter, OrderingFilter
+# pagination
+from .paginations import LargeResultsSetPagination
 """
     '''getting post list  and create post'''
     
@@ -159,8 +163,11 @@ class PostModelViewSet(viewsets.ModelViewSet):
     permission_classes= [IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
     serializer_class = PostSerializer
     queryset = Post.objects.filter(status=True)
-    filter_backends = [DjangoFilterBackend]
-    filterset_fields = ['category', 'author']
+    filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
+    filterset_fields = {'author':['exact', 'in'], 'category':['exact', 'in'],}
+    search_fields = ['content', 'title']
+    ordering_fields = ['published_date']
+    pagination_class = LargeResultsSetPagination
 
     @action(detail=False, methods=['get'])
     def get_ok(self, request):
