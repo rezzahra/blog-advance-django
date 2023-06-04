@@ -1,43 +1,49 @@
 from django.shortcuts import render
 from django.views.generic.base import TemplateView, RedirectView
-from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
+from django.views.generic import (
+    ListView,
+    DetailView,
+    CreateView,
+    UpdateView,
+    DeleteView,
+)
 from .models import Post
 from .forms import PostForm
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from accounts.models import Profile
 
+
 # Create your views here.
 class IndexView(TemplateView):
-    template_name = 'index.html'
+    template_name = "index.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['name'] = 'ali'
-        context['posts'] = Post.objects.all()
+        context["name"] = "ali"
+        context["posts"] = Post.objects.all()
         return context
 
 
 # founction base view Redirect
-'''
+"""
 fom django.shortcuts import redirect
 def redirectmaktab(request):
     return redirect('https://maktabkhooneh.org/')
-'''
+"""
 
 
 class RedirectToMaktab(RedirectView):
-    url = 'https://maktabkhooneh.org'
+    url = "https://maktabkhooneh.org"
 
 
 class PostList(LoginRequiredMixin, ListView):
     model = Post
     # queryset = Post.objects.all()
-    context_object_name = 'posts'
+    context_object_name = "posts"
     paginate_by = 2
-    login_url = '/admin/login/'
-    redirect_field_name = 're_direct_to'
-
+    login_url = "/admin/login/"
+    redirect_field_name = "re_direct_to"
 
     # def get_queryset(self):
     #     post = Post.objects.filter(status=True)
@@ -53,7 +59,7 @@ class PostCreateView(CreateView):
     model = Post
     # fields = ['author', 'title', 'content', 'category', 'status', 'published_date']
     form_class = PostForm
-    success_url = reverse_lazy('blog:post_list')
+    success_url = reverse_lazy("blog:post_list")
 
     def form_valid(self, form):
         form.instance.author = Profile.objects.get(user=self.request.user)
@@ -62,6 +68,7 @@ class PostCreateView(CreateView):
         # form.instance.author = Profile.objects.get(user=self.request.user)
         # self.object.save()
         # return super().form_valid(form)
+
 
 class PostEdite(UpdateView):
     model = Post
@@ -75,5 +82,5 @@ class PostEdite(UpdateView):
 
 class PostDelete(PermissionRequiredMixin, DeleteView):
     model = Post
-    success_url = reverse_lazy('blog:post_list')
-    permission_required = 'blog.delete_post'
+    success_url = reverse_lazy("blog:post_list")
+    permission_required = "blog.delete_post"

@@ -5,21 +5,31 @@ from .serializers import PostSerializer, CategorySerializer
 from blog.models import Post, Category
 from rest_framework import status
 from django.shortcuts import get_object_or_404
+
 # cbv api.view
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
+
 # cbv generic.view
-from rest_framework.generics import GenericAPIView, ListCreateAPIView, RetrieveUpdateDestroyAPIView
+from rest_framework.generics import (
+    GenericAPIView,
+    ListCreateAPIView,
+    RetrieveUpdateDestroyAPIView,
+)
 from rest_framework import mixins
+
 # cbv view set
 from rest_framework import viewsets
 from rest_framework.decorators import action
 from .permissions import IsOwnerOrReadOnly
+
 # filte
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
+
 # pagination
 from .paginations import LargeResultsSetPagination
+
 """
     '''getting post list  and create post'''
     
@@ -76,7 +86,6 @@ class PostListGeneric(GenericAPIView, mixins.ListModelMixin, mixins.CreateModelM
 #     serializer_class = PostSerializer
 #     queryset = Post.objects.filter(status=True)
 #
-
 
 
 '''
@@ -159,23 +168,28 @@ class PostDetailGeneric(GenericAPIView, mixins.RetrieveModelMixin, mixins.Update
 #     queryset = Post.objects.filter(status=True)
 #
 class PostModelViewSet(viewsets.ModelViewSet):
-    """getting list post & detail of the post by viewsets.ModelViewSet """
-    permission_classes= [IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
+    """getting list post & detail of the post by viewsets.ModelViewSet"""
+
+    permission_classes = [IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
     serializer_class = PostSerializer
     queryset = Post.objects.filter(status=True)
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
-    filterset_fields = {'author':['exact', 'in'], 'category':['exact', 'in'],}
-    search_fields = ['content', 'title']
-    ordering_fields = ['published_date']
+    filterset_fields = {
+        "author": ["exact", "in"],
+        "category": ["exact", "in"],
+    }
+    search_fields = ["content", "title"]
+    ordering_fields = ["published_date"]
     pagination_class = LargeResultsSetPagination
 
-    @action(detail=False, methods=['get'])
+    @action(detail=False, methods=["get"])
     def get_ok(self, request):
-        return Response({'detail':'ok'})
+        return Response({"detail": "ok"})
 
 
 class CategoryModelViewSet(viewsets.ModelViewSet):
-    """getting category of the post by viewsets.ModelViewSet """
+    """getting category of the post by viewsets.ModelViewSet"""
+
     permission_classes = [IsAuthenticatedOrReadOnly]
     serializer_class = CategorySerializer
     queryset = Category.objects.all()
